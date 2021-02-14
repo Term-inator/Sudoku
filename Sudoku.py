@@ -5,6 +5,7 @@ from copy import deepcopy
 class sudoku():
     def __init__(self):
         self.sudoku = []
+        self.sudoku_copy = []
         self.rows = []  # 每行已用的数字，从上到下
         self.columns = []  # 每列已用的数字，从左到右
         self.squares = []  # 每个3*3块已用的数字，按行遍历
@@ -77,26 +78,43 @@ class sudoku():
                         return 1
                     self.unchoose_number(self.sudoku, i, j, number)
 
+        self.init_sudoku()
+        dfs(0, 0)
+
+        space = 81 - given  # 根据玩家选择挖空
+        while space != 0:
+            r = randint(0, 8)
+            c = randint(0, 8)
+            if self.sudoku[r][c][1] == 0:
+                continue
+            self.unchoose_number(self.sudoku, r, c, self.sudoku[r][c][0])
+            self.sudoku[r][c][1] = 0  # 表示空格
+            space -= 1
+
+        return self.sudoku
+
+    def generate_sudoku_single(self, given):
         while True:
-            self.init_sudoku()
-            dfs(0, 0)
-
-            space = 81 - given  # 根据玩家选择挖空
-            while space != 0:
-                r = randint(0, 8)
-                c = randint(0, 8)
-                if self.sudoku[r][c][1] == 0:
-                    continue
-                self.unchoose_number(self.sudoku, r, c, self.sudoku[r][c][0])
-                self.sudoku[r][c][1] = 0  # 表示空格
-                space -= 1
-
-            for a in self.sudoku:
-                print(a)
+            self.generate_sudoku(given)
             self.solve_sudoku()
+            for row in self.sudoku:
+                print(row)
             print(len(self.solution_set))
+            print()
             if len(self.solution_set) == 1:
                 break
+
+        self.sudoku_copy = deepcopy(self.sudoku)
+        return self.sudoku
+
+    def generate_sudoku_multiple(self, given):
+        self.generate_sudoku(given)
+        self.solve_sudoku()
+        for row in self.sudoku:
+            print(row)
+        print(len(self.solution_set))
+        print()
+        self.sudoku_copy = deepcopy(self.sudoku)
         return self.sudoku
 
     def solve_sudoku(self):
@@ -190,3 +208,7 @@ class sudoku():
         for solution in self.solution_set:
             if is_the_same_with(solution):
                 return True
+
+    def reset_sudoku(self):
+        self.sudoku = deepcopy(self.sudoku_copy)
+        return self.sudoku
