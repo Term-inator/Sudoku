@@ -217,7 +217,7 @@ class UI:
         self.back = 0
 
     def draw_numbers(self):
-        font_number = pygame.font.Font(None, 48)
+        font_number = pygame.font.Font("assets/freesansbold.ttf", 40)
         font_center_x = self.origin_x + self.lattice / 2
         font_center_y = self.origin_y + self.lattice / 2
         mask_x = self.origin_x
@@ -281,7 +281,7 @@ class UI:
 
     def draw_bubble_button(self, bubble_screen, button_width, button_height, button_radius, gap):
         self.bubble_button.clear()
-        font_number = pygame.font.Font(None, 25)
+        font_number = pygame.font.Font("assets/freesansbold.ttf", 22)
         for number in range(1, 10):
             i = (number - 1) // 3
             j = number - i * 3 - 1
@@ -717,6 +717,7 @@ class UI:
                 self.win = False
                 self.sudoku = self.class_sudoku.reset_sudoku()
                 self.paused = False
+                self.pause_duration = 0
                 self.record()
                 self.mouse_down_position = (0, 0)
                 self.activity_stack = [self.start_screen]
@@ -804,6 +805,7 @@ class UI:
 
                 if self.in_rect(self.new_game):
                     self.paused = False
+                    self.pause_duration = 0
                     self.activity_stack = [self.start_screen]
                     self.mouse_down_position = (0, 0)
 
@@ -924,7 +926,10 @@ class UI:
 
 def main():
     ui = UI(70, 70, 450)
-    ui.launch()
+    try:
+        ui.launch()
+    except pygame.error:
+        pass
 
 
 if __name__ == "__main__":
